@@ -1,10 +1,10 @@
 import { Component, TemplateRef, OnInit } from '@angular/core';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';  
 import { TodoListsClient, TodoItemsClient,
   TodoListDto, TodoItemDto, PriorityLevelDto,
   CreateTodoListCommand, UpdateTodoListCommand,
   CreateTodoItemCommand, UpdateTodoItemCommand, UpdateTodoItemDetailCommand
-} from '../web-api-client';
+} from '../web-api-client'; 
 
 @Component({
   selector: 'app-todo-component',
@@ -14,7 +14,9 @@ import { TodoListsClient, TodoItemsClient,
 export class TodoComponent implements OnInit {
   debug = false;
   lists: TodoListDto[];
-  priorityLevels: PriorityLevelDto[];
+  priorityLevels: PriorityLevelDto[]; 
+  colours : string[] = ["white", "red", "lightblue", "lightgreen"];
+  mostUsedTags : string[] = ["project", "homework", "important", "deadline"];
   selectedList: TodoListDto;
   selectedItem: TodoItemDto;
   newListEditor: any = {};
@@ -35,7 +37,7 @@ export class TodoComponent implements OnInit {
     this.listsClient.get().subscribe(
       result => {
         this.lists = result.lists;
-        this.priorityLevels = result.priorityLevels;
+        this.priorityLevels = result.priorityLevels; 
         if (this.lists.length) {
           this.selectedList = this.lists[0];
         }
@@ -43,7 +45,7 @@ export class TodoComponent implements OnInit {
       error => console.error(error)
     );
   }
-
+  
   // Lists
   remainingItems(list: TodoListDto): number {
     return list.items.filter(t => !t.done).length;
@@ -58,6 +60,14 @@ export class TodoComponent implements OnInit {
     this.newListModalRef.hide();
     this.newListEditor = {};
   }
+
+  public onSelect(item) {
+    console.log('tag selected: value is ' + item);
+}
+
+public onSelectMostUsedTag(item) {
+  console.log('tag selected: value is ' + item);
+}
 
   addList(): void {
     const list = {
@@ -75,7 +85,7 @@ export class TodoComponent implements OnInit {
         this.newListEditor = {};
       },
       error => {
-        const errors = JSON.parse(error.response).errors;
+        const errors = JSON.parse(error.response);
 
         if (errors && errors.Title) {
           this.newListEditor.error = errors.Title[0];
@@ -148,8 +158,10 @@ export class TodoComponent implements OnInit {
           this.lists[listIndex].items.push(this.selectedItem);
         }
 
-        this.selectedItem.priority = this.itemDetailsEditor.priority;
+        this.selectedItem.priority = this.itemDetailsEditor.priority; 
         this.selectedItem.note = this.itemDetailsEditor.note;
+        this.selectedItem.colour = this.itemDetailsEditor.colour;
+         this.selectedItem.tags = this.itemDetailsEditor.tags;
         this.itemDetailsModalRef.hide();
         this.itemDetailsEditor = {};
       },
@@ -171,12 +183,17 @@ export class TodoComponent implements OnInit {
     this.editItem(item, 'itemTitle' + index);
   }
 
+  onClickTag(tag : string) {  
+    this.addItem();
+  }
+
   editItem(item: TodoItemDto, inputId: string): void {
     this.selectedItem = item;
     setTimeout(() => document.getElementById(inputId).focus(), 100);
   }
 
   updateItem(item: TodoItemDto, pressedEnter: boolean = false): void {
+  
     const isNewItem = item.id === 0;
 
     if (!item.title.trim()) {
@@ -226,4 +243,24 @@ export class TodoComponent implements OnInit {
       );
     }
   }
+
+  public onAdd(item) {
+    console.log('tag added: value is ' + item);
+}
+
+public onRemove(item) {
+    console.log('tag removed: value is ' + item);
+}
+  
+public onTextChange(text) {
+    console.log('text changed: value is ' + text);
+}
+
+public onBlur(item) {
+    console.log('input blurred: current value is ' + item);
+}
+
+public onTagEdited(item) {
+    console.log('tag edited: current value is ' + item);
+}
 }

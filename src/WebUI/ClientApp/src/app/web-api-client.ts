@@ -941,6 +941,7 @@ export interface IUpdateTodoItemCommand {
 }
 
 export class UpdateTodoItemDetailCommand implements IUpdateTodoItemDetailCommand {
+    colour?: string | undefined;
     id?: number;
     listId?: number;
     priority?: PriorityLevel;
@@ -957,6 +958,7 @@ export class UpdateTodoItemDetailCommand implements IUpdateTodoItemDetailCommand
 
     init(_data?: any) {
         if (_data) {
+            this.colour = _data["colour"];
             this.id = _data["id"];
             this.listId = _data["listId"];
             this.priority = _data["priority"];
@@ -973,6 +975,7 @@ export class UpdateTodoItemDetailCommand implements IUpdateTodoItemDetailCommand
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["colour"] = this.colour;
         data["id"] = this.id;
         data["listId"] = this.listId;
         data["priority"] = this.priority;
@@ -982,6 +985,7 @@ export class UpdateTodoItemDetailCommand implements IUpdateTodoItemDetailCommand
 }
 
 export interface IUpdateTodoItemDetailCommand {
+    colour?: string | undefined;
     id?: number;
     listId?: number;
     priority?: PriorityLevel;
@@ -1154,6 +1158,8 @@ export class TodoItemDto implements ITodoItemDto {
     done?: boolean;
     priority?: number;
     note?: string | undefined;
+    colour?: string | undefined;
+    tags? : string [];
 
     constructor(data?: ITodoItemDto) {
         if (data) {
@@ -1172,6 +1178,8 @@ export class TodoItemDto implements ITodoItemDto {
             this.done = _data["done"];
             this.priority = _data["priority"];
             this.note = _data["note"];
+            this.colour = _data["colour"];
+            this.tags = ["shopping", "development", "first", "errands"];
         }
     }
 
@@ -1190,6 +1198,8 @@ export class TodoItemDto implements ITodoItemDto {
         data["done"] = this.done;
         data["priority"] = this.priority;
         data["note"] = this.note;
+        data["colour"] = this.colour;
+        data["tags"] = this.tags;
         return data;
     }
 }
@@ -1201,6 +1211,8 @@ export interface ITodoItemDto {
     done?: boolean;
     priority?: number;
     note?: string | undefined;
+    colour?: string | undefined;
+    tags? : string [];
 }
 
 export class CreateTodoListCommand implements ICreateTodoListCommand {

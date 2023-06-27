@@ -7,7 +7,7 @@
 <div *ngIf="lists">
 
   <div class="row">
-    <div class="col-sm-4">
+    <div class="col-sm-2">
       <div class="clearfix">
         <h2 class="float-start">Lists</h2>
         <button class="btn btn-default float-end" title="New List..."
@@ -38,7 +38,7 @@
         </button>
       </div>
       <ul id="todo-items" class="list-group mb-2">
-        <li class="list-group-item" *ngFor="let item of selectedList.items; index as i">
+        <li class="list-group-item" [style.background-color] = item.colour *ngFor="let item of selectedList.items; index as i">
           <div class="d-flex">
             <div class="todo-item-checkbox">
               <input type="checkbox" [(ngModel)]="item.done" (change)="updateItem(item)" />
@@ -46,7 +46,7 @@
             <div class="flex-fill">
               <input id="{{ 'itemTitle' + i }}" *ngIf="item == selectedItem" type="text"
                 class="form-control item-input-control" [(ngModel)]="item.title" (keyup.enter)="updateItem(item, true)"
-                (blur)="updateItem(item)" autofocus="autofocus" maxlength="200" />
+                (blur)="updateItem(item)" autofocus="autofocus" />
               <div class="todo-item-title" *ngIf="item != selectedItem" [ngClass]="{ 'done-todo': item.done }"
                 (click)="editItem(item, 'itemTitle' + i)" class="form-control item-input-control">
                 <span>{{ item.title }}</span>
@@ -65,6 +65,19 @@
         </li>
       </ul>
     </div>
+
+    <div class="col-sm-2" *ngIf="mostUsedTags">
+      <div class="clearfix">
+        <h2 class="float-start">Most Used Tags</h2> 
+      </div>
+      <tag-input [(ngModel)]="mostUsedTags"
+                   [editable]="false"
+                   [removable] = "false"
+                   [maxItems]= mostUsedTags.length
+                   (onSelect)="onSelectMostUsedTag($event)" theme = "bootstrap">
+        </tag-input>
+    </div>
+
   </div>
 </div>
 
@@ -83,7 +96,7 @@
     <div class="form-group">
       <label for="inputListTitle">Title</label>
       <input type="text" class="form-control" id="inputListTitle" placeholder="List name..."
-        [(ngModel)]="listOptionsEditor.title" (keyup.enter)="updateListOptions()" maxlength="200" />
+        [(ngModel)]="listOptionsEditor.title" (keyup.enter)="updateListOptions()" />
     </div>
     <div *ngIf="debug">
       <pre>{{ listOptionsEditor | json }}</pre>
@@ -124,9 +137,23 @@
         </select>
       </div>
       <div class="form-group">
+        <label for="colour">Colour</label>
+        <select class="form-control" [(ngModel)]="itemDetailsEditor.colour">
+          <option [ngValue]="colour" *ngFor="let colour of colours">{{ colour }}</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label for="note">Note</label>
         <textarea id="note" class="form-control" rows="3" [(ngModel)]="itemDetailsEditor.note"></textarea>
       </div>
+      <div class="form-group">
+        <label for="tags">Tags</label>
+        <tag-input [(ngModel)]="itemDetailsEditor.tags"
+                   [editable]="true"
+                   (onTagEdited)="onTagEdited($event)" theme = "minimal">
+        </tag-input>
+    </div>
+      
     </div>
     <div *ngIf="debug">
       <pre>{{ itemDetailsEditor | json }}</pre>
@@ -177,7 +204,7 @@
     <div class="form-group">
       <label for="title">Title</label>
       <input type="text" class="form-control" id="title" placeholder="List title..." [(ngModel)]="newListEditor.title"
-        [ngClass]="{ 'is-invalid': newListEditor.error }" (keyup.enter)="addList()" maxlength="200" />
+        [ngClass]="{ 'is-invalid': newListEditor.error }" (keyup.enter)="addList()" />
       <div *ngIf="newListEditor.error" class="invalid-feedback">
         {{ newListEditor.error }}
       </div>
